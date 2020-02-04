@@ -66,7 +66,8 @@ function love.load()
         ['paddles'] = GenerateQuadsPaddles(gTextures['main']),
         ['balls'] = GenerateQuadsBalls(gTextures['main']),
         ['bricks'] = GenerateQuadsBricks(gTextures['main']),
-        ['hearts'] = GenerateQuads(gTextures['hearts'], 10, 9)
+        ['hearts'] = GenerateQuads(gTextures['hearts'], 10, 9),
+        ['powerups'] = GenerateQuadsPowerups(gTextures['main'])
     }
     
     -- initialize our virtual resolution, which will be rendered within our
@@ -122,7 +123,10 @@ function love.load()
         highScores = loadHighScores()
     })
 
+    love.audio.setVolume(.3) -- global master volume (all sound FX)
+
     -- play our music outside of all states and set it to looping
+    gSounds['music']:setVolume(.1)
     gSounds['music']:play()
     gSounds['music']:setLooping(true)
 

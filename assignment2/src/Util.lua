@@ -125,3 +125,26 @@ function GenerateQuadsBalls(atlas)
 
     return quads
 end
+
+function GenerateQuadsPowerups(atlas)
+    local start = 12*12 -- 12 rows of 12 width .. the stuff we want is on the 13th row
+    return table.slice(GenerateQuads(atlas, 16, 16), start+1, start+10)
+end
+
+-- CollidesAABB
+function CollidesAABB(a, b)
+    -- first, check to see if the left edge of either is farther to the right
+    -- than the right edge of the other
+    if a.x > b.x + b.width or b.x > a.x + a.width then
+        return false
+    end
+
+    -- then check to see if the bottom edge of either is higher than the top
+    -- edge of the other
+    if a.y > b.y + b.height or b.y > a.y + a.height then
+        return false
+    end 
+
+    -- if the above aren't true, they're overlapping
+    return true
+end

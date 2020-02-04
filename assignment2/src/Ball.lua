@@ -35,6 +35,8 @@ end
     and returns true if the bounding boxes of this and the argument overlap.
 ]]
 function Ball:collides(target)
+    -- TODO: use CollidesAABB
+
     -- first, check to see if the left edge of either is farther to the right
     -- than the right edge of the other
     if self.x > target.x + target.width or target.x > self.x + self.width then

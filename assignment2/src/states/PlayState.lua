@@ -34,6 +34,10 @@ function PlayState:enter(params)
     -- give ball random starting velocity
     self.ball.dx = math.random(-200, 200)
     self.ball.dy = math.random(-50, -60)
+
+    -- Create powerup 
+    -- TODO: right now it's created immediately... in the future it should be spawned on a condition
+    self.powerup = Powerup()
 end
 
 function PlayState:update(dt)
@@ -52,6 +56,9 @@ function PlayState:update(dt)
 
     -- update positions based on velocity
     self.paddle:update(dt)
+    if self.powerup.inPlay then
+        self.powerup:update(dt)
+    end
     self.ball:update(dt)
 
     if self.ball:collides(self.paddle) then
@@ -164,6 +171,10 @@ function PlayState:update(dt)
         end
     end
 
+    if self.powerup.inPlay and CollidesAABB(self.powerup, self.paddle) then
+        self.powerup:hit()
+    end
+
     -- if ball goes below bounds, revert to serve state and decrease health
     if self.ball.y >= VIRTUAL_HEIGHT then
         self.health = self.health - 1
@@ -209,6 +220,7 @@ function PlayState:render()
     end
 
     self.paddle:render()
+    self.powerup:render()
     self.ball:render()
 
     renderScore(self.score)
