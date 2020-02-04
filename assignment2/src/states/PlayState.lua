@@ -222,16 +222,19 @@ function PlayState:update(dt)
     if self.powerup.inPlay and CollidesAABB(self.powerup, self.paddle) then
         self.powerup:hit()
 
-        -- TODO: make this Ball:spawn() 
-        local b = Ball()
-        -- position above the paddle
-        b.x = self.paddle.x + (self.paddle.width / 2) - 4
-        b.y = self.paddle.y - 8
-        -- give ball random starting velocity
-        b.dx = math.random(-200, 200)
-        b.dy = math.random(-50, -60)
+        for i=1,2 do
+            -- TODO: make this Ball:spawn() 
+            local b = Ball()
+            b.skin = math.random(7)
+            -- position above the paddle
+            b.x = self.paddle.x + (self.paddle.width / 2) - 4
+            b.y = self.paddle.y - 8
+            -- give ball random starting velocity
+            b.dx = math.random(-200, 200)
+            b.dy = math.random(-50, -60)
 
-        table.insert(self.balls, b)
+            table.insert(self.balls, b)
+        end
     end
 
     -- for rendering particle systems
