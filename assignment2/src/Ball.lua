@@ -16,6 +16,10 @@
 Ball = Class{}
 
 function Ball:init(skin)
+    if not skin then
+        skin = math.random(7)
+    end
+
     -- simple positional and dimensional variables
     self.width = 8
     self.height = 8
