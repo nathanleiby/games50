@@ -21,7 +21,13 @@ function Powerup:update(dt)
         self.timer = self.timer - dt
         return
     end
+
     self.y = self.y + self.dy*dt
+
+    -- Remove from play if scrolls past bottom of screen
+    if self.y > VIRTUAL_HEIGHT then
+        self.inPlay = false
+    end
 end
 
 function Powerup:hit()

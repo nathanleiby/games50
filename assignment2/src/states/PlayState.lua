@@ -54,6 +54,10 @@ function PlayState:update(dt)
         return
     end
 
+    if love.keyboard.wasPressed('q') then
+        self.autoVictoryHack = true
+    end
+
     -- update positions based on velocity
     self.paddle:update(dt)
     if self.powerup.inPlay then
@@ -234,6 +238,10 @@ function PlayState:render()
 end
 
 function PlayState:checkVictory()
+    if self.autoVictoryHack then
+        return true
+    end
+
     for k, brick in pairs(self.bricks) do
         if brick.inPlay then
             return false
