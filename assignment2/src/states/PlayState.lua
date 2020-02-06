@@ -209,39 +209,12 @@ function PlayState:update(dt)
             self.health = self.health - 1
             gSounds['hurt']:play()
 
-            if self.health == 0 then
-                gStateMachine:change('game-over', {
-                    score = self.score,
-                    highScores = self.highScores
-                })
-            end
-
             -- set to nil, to be removed
             self.balls[k] = nil
         end
     end
 
-    -- reverse iterate to safely remove from list (?)
-    for i = #self.balls, 1, -1 do
-        if self.balls[i] == nil then
-            table.remove(self.balls, i)
-        end
-    end
-
-    if #self.balls == 0 then
-        gStateMachine:change('serve', {
-            paddle = self.paddle,
-            bricks = self.bricks,
-            health = self.health,
-            score = self.score,
-            highScores = self.highScores,
-            level = self.level,
-            recoverPoints = self.recoverPoints
-        })
-    end
-
-
-    -- handle powerup collision
+    -- check if player's paddle has collided with powerups
     for k, powerup in pairs(self.powerups) do
         if powerup.inPlay and CollidesAABB(powerup, self.paddle) then
             powerup:hit()
@@ -260,6 +233,31 @@ function PlayState:update(dt)
                 table.insert(self.balls, b)
             end
         end
+    end
+
+    -- memory cleanup
+    -- reverse iterate to safely remove from list (?)
+    for i = #self.balls, 1, -1 do
+        if self.balls[i] == nil then
+            table.remove(self.balls, i)
+        end
+    end
+
+    if self.health == 0 then
+        gStateMachine:change('game-over', {
+            score = self.score,
+            highScores = self.highScores
+        })
+    elseif #self.balls == 0 then
+        gStateMachine:change('serve', {
+            paddle = self.paddle,
+            bricks = self.bricks,
+            health = self.health,
+            score = self.score,
+            highScores = self.highScores,
+            level = self.level,
+            recoverPoints = self.recoverPoints
+        })
     end
 
     -- for rendering particle systems
