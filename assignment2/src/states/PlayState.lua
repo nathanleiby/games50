@@ -58,6 +58,12 @@ function PlayState:update(dt)
         self.autoVictoryHack = true
     end
 
+    -- show "hitbox" for the paddle
+    if love.keyboard.wasPressed('h') then
+        self.paddle.showHitbox = not self.paddle.showHitbox
+    end
+
+
     -- change paddle size
     if love.keyboard.wasPressed('1') then
         self.paddle:setSize(1)
@@ -88,7 +94,7 @@ function PlayState:update(dt)
 
         ball:update(dt)
 
-        if ball:collides(self.paddle) then
+        if CollidesAABB(ball, self.paddle) then
             -- raise ball above paddle in case it goes below it, then reverse dy
             ball.y = self.paddle.y - 8
             ball.dy = -ball.dy
@@ -113,7 +119,7 @@ function PlayState:update(dt)
         for k, brick in pairs(self.bricks) do
 
             -- only check collision if we're in play
-            if brick.inPlay and ball:collides(brick) then
+            if brick.inPlay and CollidesAABB(ball, brick) then
 
                 -- add to score
                 self.score = self.score + (brick.tier * 200 + brick.color * 25)

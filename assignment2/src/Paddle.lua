@@ -34,19 +34,22 @@ function Paddle:init(skin)
 
     -- starting dimensions
     self.height = 16
-    self.width = 32
+    self.width = 64
     self.size = 2
 
     -- the skin only has the effect of changing our color, used to offset us
     -- into the gPaddleSkins table later
     self.skin = skin
+
+    self.showHitbox = true
+    print("initial size = " .. self.size .. " , width = " .. self.width)
 end
 
 function Paddle:setSize(size)
     -- 1,2,3,4
     self.width = size * WIDTH_PER_SIZE
-    print("new width = " .. self.width)
     self.size = size
+    print("new size = " .. self.size .. " , width = " .. self.width)
 end
 
 function Paddle:update(dt)
@@ -79,7 +82,10 @@ end
     that corresponds to the proper skin and size.
 ]]
 function Paddle:render()
-    love.graphics.rectangle('fill', self.x, self.y, self.width, self.height) --  hitbox
+    if self.showHitbox then
+        love.graphics.rectangle('fill', self.x, self.y, self.width, self.height) --  hitbox
+    end
+
     love.graphics.draw(gTextures['main'], gFrames['paddles'][self.size + 4 * (self.skin - 1)],
         self.x, self.y)
 end
