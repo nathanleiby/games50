@@ -1,6 +1,6 @@
 Powerup = Class{}
 
-function Powerup:init()
+function Powerup:init(skin)
     self.x = math.random(32, VIRTUAL_WIDTH-32)
     self.y = 64
     self.width = 16
@@ -11,7 +11,12 @@ function Powerup:init()
     self.dx = 0
     self.dy = 40
 
-    -- TODO: do the below on spawn in the game, vs class init
+    if skin then
+        self.skin = skin
+    else
+        self.skin = math.random(1,10)
+    end
+
     self.inPlay = true
     self.timer = 0
 end
@@ -37,6 +42,6 @@ end
 
 function Powerup:render()
     if self.inPlay then
-        love.graphics.draw(gTextures['main'], gFrames['powerups'][1], self.x, self.y)
+        love.graphics.draw(gTextures['main'], gFrames['powerups'][self.skin], self.x, self.y)
     end
 end
