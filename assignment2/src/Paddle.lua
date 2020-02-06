@@ -19,6 +19,9 @@ Paddle = Class{}
     Our Paddle will initialize at the same spot every time, in the middle
     of the world horizontally, toward the bottom.
 ]]
+
+local WIDTH_PER_SIZE = 32
+
 function Paddle:init(skin)
     -- x is placed in the middle
     self.x = VIRTUAL_WIDTH / 2 - 32
@@ -30,16 +33,20 @@ function Paddle:init(skin)
     self.dx = 0
 
     -- starting dimensions
-    self.width = 64
     self.height = 16
+    self.width = 32
+    self.size = 2
 
     -- the skin only has the effect of changing our color, used to offset us
     -- into the gPaddleSkins table later
     self.skin = skin
+end
 
-    -- the variant is which of the four paddle sizes we currently are; 2
-    -- is the starting size, as the smallest is too tough to start with
-    self.size = 2
+function Paddle:setSize(size)
+    -- 1,2,3,4
+    self.width = size * WIDTH_PER_SIZE
+    print("new width = " .. self.width)
+    self.size = size
 end
 
 function Paddle:update(dt)
@@ -72,6 +79,7 @@ end
     that corresponds to the proper skin and size.
 ]]
 function Paddle:render()
+    love.graphics.rectangle('fill', self.x, self.y, self.width, self.height) --  hitbox
     love.graphics.draw(gTextures['main'], gFrames['paddles'][self.size + 4 * (self.skin - 1)],
         self.x, self.y)
 end

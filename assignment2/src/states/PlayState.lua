@@ -35,7 +35,7 @@ function PlayState:enter(params)
     self.balls[1].dx = math.random(-200, 200)
     self.balls[1].dy = math.random(-50, -60)
 
-    -- Create powerup 
+    -- Create powerup
     -- TODO: right now it's created immediately... in the future it should be spawned on a condition
     self.powerup = Powerup()
 end
@@ -58,6 +58,17 @@ function PlayState:update(dt)
         self.autoVictoryHack = true
     end
 
+    -- change paddle size
+    if love.keyboard.wasPressed('1') then
+        self.paddle:setSize(1)
+    elseif love.keyboard.wasPressed('2') then
+        self.paddle:setSize(2)
+    elseif love.keyboard.wasPressed('3') then
+        self.paddle:setSize(3)
+    elseif love.keyboard.wasPressed('4') then
+        self.paddle:setSize(4)
+    end
+
     -- update positions based on velocity
     self.paddle:update(dt)
     if self.powerup.inPlay then
@@ -65,7 +76,7 @@ function PlayState:update(dt)
     end
 
     for k, ball in pairs(self.balls) do
-        if not ball then 
+        if not ball then
             return
         end
 
@@ -83,7 +94,7 @@ function PlayState:update(dt)
             -- if we hit the paddle on its left side while moving left...
             if ball.x < self.paddle.x + (self.paddle.width / 2) and self.paddle.dx < 0 then
                 ball.dx = -50 + -(8 * (self.paddle.x + self.paddle.width / 2 - ball.x))
-            
+
             -- else if we hit the paddle on its right side while moving right...
             elseif ball.x > self.paddle.x + (self.paddle.width / 2) and self.paddle.dx > 0 then
                 ball.dx = 50 + (8 * math.abs(self.paddle.x + self.paddle.width / 2 - ball.x))
@@ -137,35 +148,35 @@ function PlayState:update(dt)
                 -- we check to see if the opposite side of our velocity is outside of the brick;
                 -- if it is, we trigger a collision on that side. else we're within the X + width of
                 -- the brick and should check to see if the top or bottom edge is outside of the brick,
-                -- colliding on the top or bottom accordingly 
+                -- colliding on the top or bottom accordingly
                 --
 
                 -- left edge; only check if we're moving right, and offset the check by a couple of pixels
                 -- so that flush corner hits register as Y flips, not X flips
                 if ball.x + 2 < brick.x and ball.dx > 0 then
-                    
+
                     -- flip x velocity and reset position outside of brick
                     ball.dx = -ball.dx
                     ball.x = brick.x - 8
-                
+
                 -- right edge; only check if we're moving left, , and offset the check by a couple of pixels
                 -- so that flush corner hits register as Y flips, not X flips
                 elseif ball.x + 6 > brick.x + brick.width and ball.dx < 0 then
-                    
+
                     -- flip x velocity and reset position outside of brick
                     ball.dx = -ball.dx
                     ball.x = brick.x + 32
-                
+
                 -- top edge if no X collisions, always check
                 elseif ball.y < brick.y then
-                    
+
                     -- flip y velocity and reset position outside of brick
                     ball.dy = -ball.dy
                     ball.y = brick.y - 8
-                
+
                 -- bottom edge if no X collisions or top collision, last possibility
                 else
-                    
+
                     -- flip y velocity and reset position outside of brick
                     ball.dy = -ball.dy
                     ball.y = brick.y + 16
@@ -223,7 +234,7 @@ function PlayState:update(dt)
         self.powerup:hit()
 
         for i=1,2 do
-            -- TODO: make this Ball:spawn() 
+            -- TODO: make this Ball:spawn()
             local b = Ball()
             b.skin = math.random(7)
             -- position above the paddle
@@ -283,7 +294,7 @@ function PlayState:checkVictory()
     for k, brick in pairs(self.bricks) do
         if brick.inPlay then
             return false
-        end 
+        end
     end
 
     return true
