@@ -1,9 +1,9 @@
 Powerup = Class{}
 
 function Powerup:init()
-    self.x = 32
+    self.x = math.random(32, VIRTUAL_WIDTH-32)
     self.y = 64
-    self.width = 16 
+    self.width = 16
     self.height = 16
     -- x,y,width,height make something "colliable" with the ball
 
@@ -11,7 +11,7 @@ function Powerup:init()
     self.dx = 0
     self.dy = 40
 
-    -- TODO: do the below on spawn in the game, vs class init 
+    -- TODO: do the below on spawn in the game, vs class init
     self.inPlay = true
     self.timer = 0
 end

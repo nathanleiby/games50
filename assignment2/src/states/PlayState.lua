@@ -37,7 +37,7 @@ function PlayState:enter(params)
 
     -- Create powerup
     -- TODO: right now it's created immediately... in the future it should be spawned on a condition
-    self.powerup = Powerup()
+    self.powerups = {}
 end
 
 function PlayState:update(dt)
@@ -69,10 +69,16 @@ function PlayState:update(dt)
         self.paddle:setSize(4)
     end
 
+    -- spawn powerup
+    if love.keyboard.wasPressed('p') then
+        table.insert(self.powerups, Powerup())
+    end
+
+
     -- update positions based on velocity
     self.paddle:update(dt)
-    if self.powerup.inPlay then
-        self.powerup:update(dt)
+    for k, powerup in pairs(self.powerups) do
+        powerup:update(dt)
     end
 
     for k, ball in pairs(self.balls) do
@@ -230,21 +236,23 @@ function PlayState:update(dt)
 
 
     -- handle powerup collision
-    if self.powerup.inPlay and CollidesAABB(self.powerup, self.paddle) then
-        self.powerup:hit()
+    for k, powerup in pairs(self.powerups) do
+        if powerup.inPlay and CollidesAABB(powerup, self.paddle) then
+            powerup:hit()
 
-        for i=1,2 do
-            -- TODO: make this Ball:spawn()
-            local b = Ball()
-            b.skin = math.random(7)
-            -- position above the paddle
-            b.x = self.paddle.x + (self.paddle.width / 2) - 4
-            b.y = self.paddle.y - 8
-            -- give ball random starting velocity
-            b.dx = math.random(-200, 200)
-            b.dy = math.random(-50, -60)
+            for i=1,2 do
+                -- TODO: make this Ball:spawn()
+                local b = Ball()
+                b.skin = math.random(7)
+                -- position above the paddle
+                b.x = self.paddle.x + (self.paddle.width / 2) - 4
+                b.y = self.paddle.y - 8
+                -- give ball random starting velocity
+                b.dx = math.random(-200, 200)
+                b.dy = math.random(-50, -60)
 
-            table.insert(self.balls, b)
+                table.insert(self.balls, b)
+            end
         end
     end
 
@@ -271,7 +279,9 @@ function PlayState:render()
     end
 
     self.paddle:render()
-    self.powerup:render()
+    for k, powerup in pairs(self.powerups) do
+        powerup:render()
+    end
     for k, ball in pairs(self.balls) do
         ball:render()
     end
