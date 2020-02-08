@@ -195,8 +195,9 @@ function PlayState:calculateMatches()
 
         -- add score for each match
         for k, match in pairs(matches) do
-            self.score = self.score + #match * 50
             for _, tile in pairs(match) do
+                -- level1 blocks are worth 50, level2 => 55, level3 => 60, etc. (tile variety is a value 1 through 6)
+                self.score = self.score + (0.9 + 0.1 * tile.variety) * 50
                 self.timeRemaining = self.timeRemaining + 1
             end
         end
