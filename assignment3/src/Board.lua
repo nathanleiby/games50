@@ -25,22 +25,16 @@ end
 function Board:initializeTiles()
     self.tiles = {}
 
-    for tileY = 1, 8 do
-        
+    for y = 1, 8 do
         -- empty table that will serve as a new row
         table.insert(self.tiles, {})
-
-        for tileX = 1, 8 do
-            
-            -- create a new tile at X,Y with a random color and variety
-            local color = math.random(18)
-            local variety = math.random(1, math.min(self.level, 6)) -- no more than 6 varieties, even if level >6
-            table.insert(self.tiles[tileY], Tile(tileX, tileY, color,variety))
+        for x = 1, 8 do
+            local tile = self:newTile(x,y)
+            table.insert(self.tiles[y], tile)
         end
     end
 
     while self:calculateMatches() do
-        
         -- recursively initialize if matches were returned so we always have
         -- a matchless board on start
         self:initializeTiles()
@@ -243,7 +237,7 @@ function Board:getFallingTiles()
             if not tile then
 
                 -- new tile with random color and variety
-                local tile = Tile(x, y, math.random(18), math.random(6))
+                local tile = self:newTile(x,y)
                 tile.y = -32
                 self.tiles[y][x] = tile
 
@@ -256,6 +250,13 @@ function Board:getFallingTiles()
     end
 
     return tweens
+end
+
+function Board:newTile(x,y)
+    -- create a new tile at X,Y with a random color and variety
+    local color = math.random(18)
+    local variety = math.random(1, math.min(self.level, 6)) -- no more than 6 varieties, even if level >6
+    return Tile(x, y, color, variety)
 end
 
 function Board:render()
