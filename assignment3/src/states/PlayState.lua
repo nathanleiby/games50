@@ -37,7 +37,7 @@ function PlayState:init()
     self.highlightedTile = nil
 
     self.score = 0
-    self.timer = 60
+    self.timeRemaining = 60
 
     -- set our Timer class to turn cursor highlight on and off
     Timer.every(0.5, function()
@@ -46,10 +46,10 @@ function PlayState:init()
 
     -- subtract 1 from timer every second
     Timer.every(1, function()
-        self.timer = self.timer - 1
+        self.timeRemaining = self.timeRemaining - 1
 
         -- play warning sound on timer if we get low
-        if self.timer <= 5 then
+        if self.timeRemaining <= 5 then
             gSounds['clock']:play()
         end
     end)
@@ -76,7 +76,7 @@ function PlayState:update(dt)
     end
 
     -- go back to start if time runs out
-    if self.timer <= 0 then
+    if self.timeRemaining <= 0 then
         
         -- clear timers from prior PlayStates
         Timer.clear()
@@ -258,5 +258,5 @@ function PlayState:render()
     love.graphics.printf('Level: ' .. tostring(self.level), 20, 24, 182, 'center')
     love.graphics.printf('Score: ' .. tostring(self.score), 20, 52, 182, 'center')
     love.graphics.printf('Goal : ' .. tostring(self.scoreGoal), 20, 80, 182, 'center')
-    love.graphics.printf('Timer: ' .. tostring(self.timer), 20, 108, 182, 'center')
+    love.graphics.printf('Timer: ' .. tostring(self.timeRemaining), 20, 108, 182, 'center')
 end
