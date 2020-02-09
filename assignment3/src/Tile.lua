@@ -34,8 +34,6 @@ function Tile:init(x, y, color, variety, shiny)
     self.shiny = shiny or false
     self.shiny = math.random() > 0.90 -- true -- math.random() > 0.9 -- TODO: testing 123
     if self.shiny then
-        print("TILE x=" .. x .. " , y=" .. y .. " is shiny")
-
         self.shinyShader = love.graphics.newShader[[
             extern number factor = 0;
             extern number tx = 0;

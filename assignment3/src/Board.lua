@@ -16,6 +16,10 @@ Board = Class{}
 function Board:init(x, y, level)
     self.x = x
     self.y = y
+
+    self.gridWidth = 8 -- x
+    self.gridHeight = 8 -- y
+
     self.level = level
 
     -- manage intermediate state during matching
@@ -28,10 +32,10 @@ end
 function Board:initializeTiles()
     self.tiles = {}
 
-    for y = 1, 8 do
+    for y = 1, self.gridHeight do
         -- empty table that will serve as a new row
         table.insert(self.tiles, {})
-        for x = 1, 8 do
+        for x = 1, self.gridWidth do
             local tile = self:newTile(x,y)
             table.insert(self.tiles[y], tile)
         end
@@ -47,6 +51,12 @@ end
 function Board:addMatchedTile(x, y)
     local tile = self.tiles[y][x]
     self.matchedTiles[tile:ID()] = tile
+    if tile.shiny then
+        for x2 = 1, self.gridWidth do
+            local t2 = self.tiles[y][x2]
+            self.matchedTiles[t2:ID()] = t2
+        end
+    end
     self.hasMatches = true
 end
 
