@@ -78,3 +78,7 @@ function Tile:render(x, y, shineFactor)
 
     love.graphics.setShader()
 end
+
+function Tile:ID()
+    return "x=" .. self.gridX .. ",y=" .. self.gridY
+end

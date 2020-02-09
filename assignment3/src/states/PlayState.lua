@@ -193,19 +193,17 @@ function PlayState:calculateMatches()
     self.highlightedTile = nil
 
     -- if we have any matches, remove them and tween the falling blocks that result
-    local matches = self.board:calculateMatches()
+    local matchedTiles = self.board:calculateMatches()
     
-    if matches then
+    if matchedTiles then
         gSounds['match']:stop()
         gSounds['match']:play()
 
         -- add score for each match
-        for k, match in pairs(matches) do
-            for _, tile in pairs(match) do
-                -- level1 blocks are worth 50, level2 => 55, level3 => 60, etc. (tile variety is a value 1 through 6)
-                self.score = self.score + (0.9 + 0.1 * tile.variety) * 50
-                self.timeRemaining = self.timeRemaining + 1
-            end
+        for _, tile in pairs(matchedTiles) do
+            -- level1 blocks are worth 50, level2 => 55, level3 => 60, etc. (tile variety is a value 1 through 6)
+            self.score = self.score + (0.9 + 0.1 * tile.variety) * 50
+            self.timeRemaining = self.timeRemaining + 1
         end
 
         -- remove any tiles that matched from the board, making empty spaces

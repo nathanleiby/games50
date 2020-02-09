@@ -16,7 +16,7 @@ Board = Class{}
 function Board:init(x, y, level)
     self.x = x
     self.y = y
-    self.matches = {}
+    self.matchedTiles = {}
     self.level = level
 
     self:initializeTiles()
@@ -47,7 +47,8 @@ end
     last two haven't been a match.
 ]]
 function Board:calculateMatches()
-    local matches = {}
+    local matchedTiles = {}
+    local foundMatches = false
 
     -- how many of the same color blocks in a row we've found
     local matchNum = 1
@@ -71,17 +72,13 @@ function Board:calculateMatches()
 
                 -- if we have a match of 3 or more up to now, add it to our matches table
                 if matchNum >= 3 then
-                    local match = {}
-
                     -- go backwards from here by matchNum
                     for x2 = x - 1, x - matchNum, -1 do
-                        
+                        foundMatches = true
                         -- add each tile to the match that's in that match
-                        table.insert(match, self.tiles[y][x2])
+                        local tile = self.tiles[y][x2]
+                        matchedTiles[tile:ID()] = tile
                     end
-
-                    -- add this match to our total matches table
-                    table.insert(matches, match)
                 end
 
                 matchNum = 1
@@ -95,14 +92,12 @@ function Board:calculateMatches()
 
         -- account for the last row ending with a match
         if matchNum >= 3 then
-            local match = {}
-            
             -- go backwards from end of last row by matchNum
             for x = 8, 8 - matchNum + 1, -1 do
-                table.insert(match, self.tiles[y][x])
+                foundMatches = true
+                local tile = self.tiles[y][x]
+                matchedTiles[tile:ID()] = tile
             end
-
-            table.insert(matches, match)
         end
     end
 
@@ -120,13 +115,11 @@ function Board:calculateMatches()
                 colorToMatch = self.tiles[y][x].color
 
                 if matchNum >= 3 then
-                    local match = {}
-
                     for y2 = y - 1, y - matchNum, -1 do
-                        table.insert(match, self.tiles[y2][x])
+                        foundMatches = true
+                        local tile = self.tiles[y2][x]
+                        matchedTiles[tile:ID()] = tile
                     end
-
-                    table.insert(matches, match)
                 end
 
                 matchNum = 1
@@ -140,22 +133,18 @@ function Board:calculateMatches()
 
         -- account for the last column ending with a match
         if matchNum >= 3 then
-            local match = {}
-            
             -- go backwards from end of last row by matchNum
             for y = 8, 8 - matchNum + 1, -1 do
-                table.insert(match, self.tiles[y][x])
+                foundMatches = true
+                local tile = self.tiles[y][x]
+                matchedTiles[tile:ID()] = tile
             end
-
-            table.insert(matches, match)
         end
     end
 
     -- store matches for later reference
-    self.matches = matches
-
-    -- return matches table if > 0, else just return false
-    return #self.matches > 0 and self.matches or false
+    self.matchedTiles = matchedTiles
+    return foundMatches and self.matchedTiles or false
 end
 
 --[[
@@ -163,13 +152,11 @@ end
     them to nil, then setting self.matches to nil.
 ]]
 function Board:removeMatches()
-    for k, match in pairs(self.matches) do
-        for k, tile in pairs(match) do
-            self.tiles[tile.gridY][tile.gridX] = nil
-        end
+    for _, tile in pairs(self.matchedTiles) do
+        self.tiles[tile.gridY][tile.gridX] = nil
     end
 
-    self.matches = nil
+    self.matchedTiles = nil
 end
 
 --[[
