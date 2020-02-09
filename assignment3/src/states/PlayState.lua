@@ -109,78 +109,82 @@ function PlayState:update(dt)
     end
 
     if self.canInput then
-        -- move cursor around based on bounds of grid, playing sounds
-        if love.keyboard.wasPressed('up') then
-            self.boardHighlightY = math.max(0, self.boardHighlightY - 1)
-            gSounds['select']:play()
-        elseif love.keyboard.wasPressed('down') then
-            self.boardHighlightY = math.min(7, self.boardHighlightY + 1)
-            gSounds['select']:play()
-        elseif love.keyboard.wasPressed('left') then
-            self.boardHighlightX = math.max(0, self.boardHighlightX - 1)
-            gSounds['select']:play()
-        elseif love.keyboard.wasPressed('right') then
-            self.boardHighlightX = math.min(7, self.boardHighlightX + 1)
-            gSounds['select']:play()
-        end
-
-        -- if we've pressed enter, to select or deselect a tile...
-        if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
-            
-            -- if same tile as currently highlighted, deselect
-            local x = self.boardHighlightX + 1
-            local y = self.boardHighlightY + 1
-            
-            -- if nothing is highlighted, highlight current tile
-            if not self.highlightedTile then
-                self.highlightedTile = self.board.tiles[y][x]
-
-            -- if we select the position already highlighted, remove highlight
-            elseif self.highlightedTile == self.board.tiles[y][x] then
-                self.highlightedTile = nil
-
-            -- if the difference between X and Y combined of this highlighted tile
-            -- vs the previous is not equal to 1, also remove highlight
-            elseif math.abs(self.highlightedTile.gridX - x) + math.abs(self.highlightedTile.gridY - y) > 1 then
-                gSounds['error']:play()
-                self.highlightedTile = nil
-            else
-                
-                -- swap grid positions of tiles
-                local tempX = self.highlightedTile.gridX
-                local tempY = self.highlightedTile.gridY
-
-                local newTile = self.board.tiles[y][x]
-
-                self.highlightedTile.gridX = newTile.gridX
-                self.highlightedTile.gridY = newTile.gridY
-                newTile.gridX = tempX
-                newTile.gridY = tempY
-
-                -- swap tiles in the tiles table
-                self.board.tiles[self.highlightedTile.gridY][self.highlightedTile.gridX] =
-                    self.highlightedTile
-
-                self.board.tiles[newTile.gridY][newTile.gridX] = newTile
-
-                -- tween coordinates between the two so they swap
-                Timer.tween(0.1, {
-                    [self.highlightedTile] = {x = newTile.x, y = newTile.y},
-                    [newTile] = {x = self.highlightedTile.x, y = self.highlightedTile.y}
-                })
-                
-                -- once the swap is finished, we can tween falling blocks as needed
-                :finish(function()
-                    self:calculateMatches()
-                end)
-            end
-        end
+        self:handleKeyboardInput()
     end
 
     -- for shinyShader
     self.shineTime = (self.shineTime + dt) % (2 * math.pi)
 
     Timer.update(dt)
+end
+
+function PlayState:handleKeyboardInput() 
+    -- move cursor around based on bounds of grid, playing sounds
+    if love.keyboard.wasPressed('up') then
+        self.boardHighlightY = math.max(0, self.boardHighlightY - 1)
+        gSounds['select']:play()
+    elseif love.keyboard.wasPressed('down') then
+        self.boardHighlightY = math.min(7, self.boardHighlightY + 1)
+        gSounds['select']:play()
+    elseif love.keyboard.wasPressed('left') then
+        self.boardHighlightX = math.max(0, self.boardHighlightX - 1)
+        gSounds['select']:play()
+    elseif love.keyboard.wasPressed('right') then
+        self.boardHighlightX = math.min(7, self.boardHighlightX + 1)
+        gSounds['select']:play()
+    end
+
+    -- if we've pressed enter, to select or deselect a tile...
+    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+        
+        -- if same tile as currently highlighted, deselect
+        local x = self.boardHighlightX + 1
+        local y = self.boardHighlightY + 1
+        
+        -- if nothing is highlighted, highlight current tile
+        if not self.highlightedTile then
+            self.highlightedTile = self.board.tiles[y][x]
+
+        -- if we select the position already highlighted, remove highlight
+        elseif self.highlightedTile == self.board.tiles[y][x] then
+            self.highlightedTile = nil
+
+        -- if the difference between X and Y combined of this highlighted tile
+        -- vs the previous is not equal to 1, also remove highlight
+        elseif math.abs(self.highlightedTile.gridX - x) + math.abs(self.highlightedTile.gridY - y) > 1 then
+            gSounds['error']:play()
+            self.highlightedTile = nil
+        else
+            
+            -- swap grid positions of tiles
+            local tempX = self.highlightedTile.gridX
+            local tempY = self.highlightedTile.gridY
+
+            local newTile = self.board.tiles[y][x]
+
+            self.highlightedTile.gridX = newTile.gridX
+            self.highlightedTile.gridY = newTile.gridY
+            newTile.gridX = tempX
+            newTile.gridY = tempY
+
+            -- swap tiles in the tiles table
+            self.board.tiles[self.highlightedTile.gridY][self.highlightedTile.gridX] =
+                self.highlightedTile
+
+            self.board.tiles[newTile.gridY][newTile.gridX] = newTile
+
+            -- tween coordinates between the two so they swap
+            Timer.tween(0.1, {
+                [self.highlightedTile] = {x = newTile.x, y = newTile.y},
+                [newTile] = {x = self.highlightedTile.x, y = self.highlightedTile.y}
+            })
+            
+            -- once the swap is finished, we can tween falling blocks as needed
+            :finish(function()
+                self:calculateMatches()
+            end)
+        end
+    end
 end
 
 --[[
