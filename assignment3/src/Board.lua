@@ -259,10 +259,14 @@ function Board:newTile(x,y)
     return Tile(x, y, color, variety)
 end
 
-function Board:render()
+function Board:render(shineFactor)
+    if not shineFactor then
+        shineFactor = 0
+    end
+
     for y = 1, #self.tiles do
         for x = 1, #self.tiles[1] do
-            self.tiles[y][x]:render(self.x, self.y)
+            self.tiles[y][x]:render(self.x, self.y, shineFactor)
         end
     end
 end

@@ -53,6 +53,9 @@ function PlayState:init()
             gSounds['clock']:play()
         end
     end)
+
+    -- manage state of shinyShader
+    self.shineTime = 0
 end
 
 function PlayState:enter(params)
@@ -174,6 +177,9 @@ function PlayState:update(dt)
         end
     end
 
+    -- for shinyShader
+    self.shineTime = (self.shineTime + dt) % (2 * math.pi)
+
     Timer.update(dt)
 end
 
@@ -225,7 +231,8 @@ end
 
 function PlayState:render()
     -- render board of tiles
-    self.board:render()
+    local shineFactor = (1 + math.cos(self.shineTime))  / 2
+    self.board:render(shineFactor)
 
     -- render highlighted tile if it exists
     if self.highlightedTile then
