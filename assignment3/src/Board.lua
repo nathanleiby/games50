@@ -29,6 +29,24 @@ function Board:init(x, y, level)
     self:initializeTiles()
 end
 
+function Board:getTileGivenPixels(x, y)
+    local tileSize = 32
+
+    -- handle board offset
+    x = x - self.x
+    y = y - self.y
+
+    for _, row in pairs(self.tiles) do
+        for _, tile in pairs(row) do
+            if x >= tile.x and x < (tile.x + tileSize) and y >= tile.y and y < (tile.y + tileSize) then
+                return tile
+            end
+        end
+    end
+
+    return nil
+end
+
 function Board:initializeTiles()
     self.tiles = {}
     self.hasMatches = false

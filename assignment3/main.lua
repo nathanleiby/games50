@@ -45,7 +45,7 @@ VIRTUAL_HEIGHT = 288
 BACKGROUND_SCROLL_SPEED = 80
 
 function love.load()
-    
+
     -- window bar title
     love.window.setTitle('Match 3')
 
@@ -78,6 +78,7 @@ function love.load()
 
     -- initialize input table
     love.keyboard.keysPressed = {}
+    love.mouse.buttonsPressed = {}
 end
 
 function love.resize(w, h)
@@ -85,7 +86,7 @@ function love.resize(w, h)
 end
 
 function love.keypressed(key)
-    
+
     -- add to our table of keys pressed this frame
     love.keyboard.keysPressed[key] = true
 end
@@ -98,11 +99,31 @@ function love.keyboard.wasPressed(key)
     end
 end
 
+function love.mousepressed(x, y, button, istouch)
+    -- add to our table of buttons pressed this frame
+    love.mouse.buttonsPressed[button] = {
+        x = x,
+        y = y,
+        button = button,
+        istouch = istouch
+    }
+end
+
+function love.mouse.wasPressed(button)
+    local item = love.mouse.buttonsPressed[button]
+    if item then
+        return item
+    else
+        return false
+    end
+end
+
+
 function love.update(dt)
-    
+
     -- scroll background, used across all states
     backgroundX = backgroundX - BACKGROUND_SCROLL_SPEED * dt
-    
+
     -- if we've scrolled the entire image, reset it to 0
     if backgroundX <= -1024 + VIRTUAL_WIDTH - 4 + 51 then
         backgroundX = 0
@@ -111,6 +132,7 @@ function love.update(dt)
     gStateMachine:update(dt)
 
     love.keyboard.keysPressed = {}
+    love.mouse.buttonsPressed = {}
 end
 
 function love.draw()
@@ -118,7 +140,7 @@ function love.draw()
 
     -- scrolling background drawn behind every state
     love.graphics.draw(gTextures['background'], backgroundX, 0)
-    
+
     gStateMachine:render()
     push:finish()
 end
