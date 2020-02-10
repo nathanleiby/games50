@@ -31,6 +31,7 @@ end
 
 function Board:initializeTiles()
     self.tiles = {}
+    self.hasMatches = false
 
     for y = 1, self.gridHeight do
         -- empty table that will serve as a new row
